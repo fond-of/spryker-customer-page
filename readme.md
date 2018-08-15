@@ -1,10 +1,10 @@
 # fond-of-spryker/fond-of-spryker/checkout-page
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://packagist.org/packages/fond-of-spryker/google-custom-search)
 
-Remove customer registration from checkout. Every Customer will be saved 
-after placing order. On another order form the same customer the email 
-address will be matched. So you get a history of all orders from the same 
-customer in ZED
+Removes the customer registration from checkout. Every Customer will be 
+saved after placing order. On another order form the same customer the 
+email address will be matched. So you get a history of all orders from 
+the same customer in ZED
 
 You need to implement 3 packages:
 - fond-of-spryker/checkout-page
