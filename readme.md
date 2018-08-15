@@ -1,4 +1,4 @@
-# fond-of-spryker/fond-of-spryker/checkout-page
+# fond-of-spryker/fond-of-spryker/customer-page
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://packagist.org/packages/fond-of-spryker/google-custom-search)
 
 Removes the customer registration from checkout. Every Customer will be 
@@ -16,7 +16,7 @@ You need to implement 3 packages:
 All packages are depended on each other
 
 ```
-composer require fond-of-spryker/checkout-page
+composer require fond-of-spryker/customer-page
 ```
 
 ### Configuration
