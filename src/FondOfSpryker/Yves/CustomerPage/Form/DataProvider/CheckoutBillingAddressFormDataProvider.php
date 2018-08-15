@@ -4,10 +4,10 @@ namespace FondOfSpryker\Yves\CustomerPage\Form\DataProvider;
 
 use Generated\Shared\Transfer\AddressTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
-use SprykerShop\Yves\CustomerPage\Form\CheckoutAddressCollectionForm;
 use Spryker\Shared\Kernel\Store;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface;
+use SprykerShop\Yves\CustomerPage\Form\CheckoutAddressCollectionForm;
 use SprykerShop\Yves\CustomerPage\Form\DataProvider\AbstractAddressFormDataProvider;
 
 class CheckoutBillingAddressFormDataProvider extends AbstractAddressFormDataProvider implements StepEngineFormDataProviderInterface

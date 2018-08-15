@@ -2,14 +2,14 @@
 
 namespace FondOfSpryker\Yves\CustomerPage\Form;
 
-use Generated\Shared\Transfer\AddressTransfer;
 use FondOfSpryker\Yves\CheckoutPage\Form\CheckoutAddressForm;
+use Generated\Shared\Transfer\AddressTransfer;
 use Spryker\Yves\Kernel\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class CheckoutBillingAddressCollectionForm extends AbstractType
 {
@@ -81,7 +81,7 @@ class CheckoutBillingAddressCollectionForm extends AbstractType
             CheckboxType::class,
             [
                 'required' => false,
-                'data' => true
+                'data' => true,
             ]
         );
 
