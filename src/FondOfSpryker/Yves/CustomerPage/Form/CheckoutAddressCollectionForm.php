@@ -2,7 +2,6 @@
 
 namespace FondOfSpryker\Yves\CustomerPage\Form;
 
-use FondOfSpryker\Yves\CheckoutPage\Form\CheckoutAddressForm;
 use Generated\Shared\Transfer\AddressTransfer;
 use Spryker\Yves\Kernel\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -11,7 +10,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraint;
 
-class CheckoutBillingAddressCollectionForm extends AbstractType
+class CheckoutAddressCollectionForm extends AbstractType
 {
     const FIELD_SHIPPING_ADDRESS = 'shippingAddress';
     const FIELD_BILLING_ADDRESS = 'billingAddress';
@@ -28,7 +27,7 @@ class CheckoutBillingAddressCollectionForm extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'billingAddressForm';
+        return 'addressesForm';
     }
 
     /**
@@ -65,14 +64,47 @@ class CheckoutBillingAddressCollectionForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this
+            ->addShippingAddressSubForm($builder, $options)
             ->addSameAsShipmentCheckbox($builder)
             ->addBillingAddressSubForm($builder, $options);
     }
 
     /**
      * @param \Symfony\Component\Form\FormBuilderInterface $builder
+     * @param array $options
      *
-     * @return \FondOfSpryker\Yves\CustomerPage\Form\CheckoutBillingAddressCollectionForm
+     * @return \FondOfSpryker\Yves\CustomerPage\Form\CheckoutAddressCollectionForm
+     */
+    protected function addShippingAddressSubForm(FormBuilderInterface $builder, array $options)
+    {
+        $options = [
+            'data_class' => AddressTransfer::class,
+            'required' => false,
+            'validation_groups' => function (FormInterface $form) {
+                if ($form->getParent()->get(self::FIELD_BILLING_SAME_AS_SHIPPING)->getData()) {
+                    return false;
+                }
+
+                if (!$form->has(CheckoutAddressForm::FIELD_ID_CUSTOMER_ADDRESS) || !$form->get(CheckoutAddressForm::FIELD_ID_CUSTOMER_ADDRESS)->getData()) {
+                    return [self::GROUP_SHIPPING_ADDRESS];
+                }
+
+                return false;
+            },
+            CheckoutAddressForm::OPTION_VALIDATION_GROUP => self::GROUP_SHIPPING_ADDRESS,
+            CheckoutAddressForm::OPTION_ADDRESS_CHOICES => $options[self::OPTION_ADDRESS_CHOICES],
+            CheckoutAddressForm::OPTION_COUNTRY_CHOICES => $options[self::OPTION_COUNTRY_CHOICES],
+        ];
+
+        $builder->add(self::FIELD_SHIPPING_ADDRESS, CheckoutShippingAddressForm::class, $options);
+
+        return $this;
+    }
+
+    /**
+     * @param \Symfony\Component\Form\FormBuilderInterface $builder
+     *
+     * @return \FondOfSpryker\Yves\CustomerPage\Form\CheckoutAddressCollectionForm
      */
     protected function addSameAsShipmentCheckbox(FormBuilderInterface $builder)
     {
@@ -81,7 +113,6 @@ class CheckoutBillingAddressCollectionForm extends AbstractType
             CheckboxType::class,
             [
                 'required' => false,
-                'data' => true,
             ]
         );
 
@@ -92,7 +123,7 @@ class CheckoutBillingAddressCollectionForm extends AbstractType
      * @param \Symfony\Component\Form\FormBuilderInterface $builder
      * @param array $options
      *
-     * @return \FondOfSpryker\Yves\CustomerPage\Form\CheckoutBillingAddressCollectionForm
+     * @return \FondOfSpryker\Yves\CustomerPage\Form\CheckoutAddressCollectionForm
      */
     protected function addBillingAddressSubForm(FormBuilderInterface $builder, array $options)
     {
@@ -105,6 +136,7 @@ class CheckoutBillingAddressCollectionForm extends AbstractType
 
                 return false;
             },
+            'required' => false,
             CheckoutAddressForm::OPTION_VALIDATION_GROUP => self::GROUP_BILLING_ADDRESS,
             CheckoutAddressForm::OPTION_ADDRESS_CHOICES => $options[self::OPTION_ADDRESS_CHOICES],
             CheckoutAddressForm::OPTION_COUNTRY_CHOICES => $options[self::OPTION_COUNTRY_CHOICES],
