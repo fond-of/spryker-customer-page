@@ -2,6 +2,7 @@
 
 namespace FondOfSpryker\Yves\CustomerPage\Form;
 
+use FondOfSpryker\Yves\CheckoutPage\Form\CheckoutAddressForm;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,26 +20,8 @@ class CheckoutShippingAddressForm extends CheckoutAddressForm
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
-        $this->addAdditionalAddress($builder);
-    }
 
-    /**
-     * @param \Symfony\Component\Form\FormBuilderInterface $builder
-     *
-     * @return $this
-     */
-    protected function addAdditionalAddress(FormBuilderInterface $builder)
-    {
-        $builder->add(
-            static::FIELD_ADDITIONAL_ADDRESS,
-            TextType::class,
-            [
-                'label' => 'customer.address.additional_address',
-                'required' => false,
-            ]
-        );
-
-        return $this;
+        $builder->remove(self::FIELD_EMAIL);
     }
 
     /**

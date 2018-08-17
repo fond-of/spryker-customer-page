@@ -2,6 +2,7 @@
 
 namespace FondOfSpryker\Yves\CustomerPage\Form;
 
+use FondOfSpryker\Yves\CheckoutPage\Form\CheckoutAddressForm;
 use Generated\Shared\Transfer\AddressTransfer;
 use Spryker\Yves\Kernel\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
