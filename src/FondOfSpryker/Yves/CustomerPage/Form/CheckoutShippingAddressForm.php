@@ -4,7 +4,6 @@ namespace FondOfSpryker\Yves\CustomerPage\Form;
 
 use FondOfSpryker\Yves\CheckoutPage\Form\CheckoutAddressForm;
 use Generated\Shared\Transfer\QuoteTransfer;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class CheckoutShippingAddressForm extends CheckoutAddressForm
