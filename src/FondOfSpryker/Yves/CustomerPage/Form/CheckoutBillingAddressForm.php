@@ -22,8 +22,9 @@ class CheckoutBillingAddressForm extends CheckoutAddressForm
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
+
         $this->addEmailField($builder, $options);
-        //$this->addAdditionalAddress($builder);
+        $this->removeCompany($builder, $options);
     }
 
     /**
@@ -73,5 +74,18 @@ class CheckoutBillingAddressForm extends CheckoutAddressForm
     protected function getAddress(QuoteTransfer $quoteTransfer)
     {
         return $quoteTransfer->getBillingAddress();
+    }
+
+    /**
+     * @param \Symfony\Component\Form\FormBuilderInterface $builder
+     * @param array $options
+     *
+     * @return $this
+     */
+    protected function removeCompany(FormBuilderInterface $builder, array $options)
+    {
+        $builder->remove(self::FIELD_COMPANY);
+
+        return $this;
     }
 }
