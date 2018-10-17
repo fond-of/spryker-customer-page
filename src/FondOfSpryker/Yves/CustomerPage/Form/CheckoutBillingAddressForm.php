@@ -2,11 +2,15 @@
 
 namespace FondOfSpryker\Yves\CustomerPage\Form;
 
+use FondOfSpryker\Shared\Customer\CustomerConstants;
 use FondOfSpryker\Yves\CheckoutPage\Form\CheckoutAddressForm;
+use Generated\Shared\Transfer\AddressTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class CheckoutBillingAddressForm extends CheckoutAddressForm
 {
@@ -67,6 +71,23 @@ class CheckoutBillingAddressForm extends CheckoutAddressForm
     }
 
     /**
+     * @param \Symfony\Component\Form\FormBuilderInterface $builder
+     * @param array $options
+     *
+     * @return $this
+     */
+    protected function addPhoneField(FormBuilderInterface $builder, array $options)
+    {
+        $builder->add(self::FIELD_PHONE, TextType::class, [
+            'label' => 'customer.address.phone',
+            'required' => false,
+            'constraints' => $this->createCallbackConstraint($options),
+        ]);
+
+        return $this;
+    }
+
+    /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
      * @return \Generated\Shared\Transfer\AddressTransfer
@@ -87,5 +108,39 @@ class CheckoutBillingAddressForm extends CheckoutAddressForm
         $builder->remove(self::FIELD_COMPANY);
 
         return $this;
+    }
+
+    protected function createCallbackConstraint(array $options)
+    {
+        return new Callback([
+            'callback' => function($object, ExecutionContextInterface $context)
+            {
+                /** @var QuoteTransfer $quoteTransfer */
+                $quoteTransfer = $context->getRoot()->getData();
+
+                /** @var AddressTransfer $address */
+                $address = $this->getAddress($quoteTransfer);
+
+                if (!$this->isPhoneNumberValid($address)) {
+                    $context->buildViolation('checkout.error.field.notEU')
+                        ->addViolation();
+                }
+            },
+            'payload' => $this,
+            'groups' => $options[self::OPTION_VALIDATION_GROUP],
+        ]);
+    }
+
+    protected function isPhoneNumberValid(AddressTransfer $addressTransfer)
+    {
+        $countriesInEU = CustomerConstants::COUNTRIES_IN_EU;
+        $phoneNumber = $addressTransfer->getPhone();
+        $countryIsoCode = $addressTransfer->getIso2Code();
+
+        if (empty($phoneNumber) && !in_array($countryIsoCode, $countriesInEU)) {
+            return false;
+        }
+
+        return true;
     }
 }
