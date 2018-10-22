@@ -21,6 +21,7 @@ class CheckoutShippingAddressForm extends CheckoutAddressForm
         parent::buildForm($builder, $options);
 
         $builder->remove(self::FIELD_EMAIL);
+        $this->removeCompany($builder, $options);
     }
 
     /**
@@ -31,5 +32,12 @@ class CheckoutShippingAddressForm extends CheckoutAddressForm
     protected function getAddress(QuoteTransfer $quoteTransfer)
     {
         return $quoteTransfer->getShippingAddress();
+    }
+
+    protected function removeCompany(FormBuilderInterface $builder, array $options)
+    {
+        $builder->remove(self::FIELD_COMPANY);
+
+        return $this;
     }
 }
