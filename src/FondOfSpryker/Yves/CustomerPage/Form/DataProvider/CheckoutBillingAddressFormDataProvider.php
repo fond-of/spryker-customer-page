@@ -4,7 +4,6 @@ namespace FondOfSpryker\Yves\CustomerPage\Form\DataProvider;
 
 use Generated\Shared\Transfer\AddressTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
-use Spryker\Shared\Kernel\Store;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface;
 use SprykerShop\Yves\CustomerPage\Form\CheckoutAddressCollectionForm;
@@ -12,24 +11,6 @@ use SprykerShop\Yves\CustomerPage\Form\DataProvider\AbstractAddressFormDataProvi
 
 class CheckoutBillingAddressFormDataProvider extends AbstractAddressFormDataProvider implements StepEngineFormDataProviderInterface
 {
-    /**
-     * @var \Generated\Shared\Transfer\CustomerTransfer
-     */
-    protected $customerTransfer;
-
-    /**
-     * @param \Pyz\Client\Customer\CustomerClientInterface $customerClient
-     * @param \Spryker\Shared\Kernel\Store $store
-     * @param \Spryker\Client\Glossary\GlossaryClientInterface $glossaryClient
-     * @param \Spryker\Client\Locale\LocaleClientInterface $localeClient
-     */
-    public function __construct($customerClient, Store $store)
-    {
-        parent::__construct($customerClient, $store);
-
-        $this->customerTransfer = $this->getCustomer();
-    }
-
     /**
      * @param \Spryker\Shared\Kernel\Transfer\AbstractTransfer|\Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
@@ -55,16 +36,6 @@ class CheckoutBillingAddressFormDataProvider extends AbstractAddressFormDataProv
     }
 
     /**
-     * @return \Generated\Shared\Transfer\CustomerTransfer|null
-     */
-    protected function getCustomer()
-    {
-        $this->customerClient->markCustomerAsDirty();
-
-        return $this->customerClient->getCustomer();
-    }
-
-    /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
      * @return \Generated\Shared\Transfer\AddressTransfer
@@ -76,8 +47,12 @@ class CheckoutBillingAddressFormDataProvider extends AbstractAddressFormDataProv
             $billingAddressTransfer = $quoteTransfer->getBillingAddress();
         }
 
-        if ($this->customerTransfer !== null && $quoteTransfer->getBillingAddress() === null) {
-            $billingAddressTransfer->setIdCustomerAddress($this->customerTransfer->getDefaultBillingAddress());
+        $this->customerClient->markCustomerAsDirty();
+
+        $customerTransfer = $this->customerClient->getCustomer();
+
+        if ($customerTransfer !== null && $quoteTransfer->getBillingAddress() === null) {
+            $billingAddressTransfer->setIdCustomerAddress($customerTransfer->getDefaultBillingAddress());
         }
 
         return $billingAddressTransfer;
@@ -88,11 +63,15 @@ class CheckoutBillingAddressFormDataProvider extends AbstractAddressFormDataProv
      */
     protected function getAddressChoices()
     {
-        if ($this->customerTransfer === null) {
+        $this->customerClient->markCustomerAsDirty();
+
+        $customerTransfer = $this->customerClient->getCustomer();
+
+        if ($customerTransfer === null) {
             return [];
         }
 
-        $customerAddressesTransfer = $this->customerTransfer->getAddresses();
+        $customerAddressesTransfer = $customerTransfer->getAddresses();
 
         if ($customerAddressesTransfer === null) {
             return [];

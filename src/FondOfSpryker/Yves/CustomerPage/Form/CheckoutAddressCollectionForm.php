@@ -2,6 +2,7 @@
 
 namespace FondOfSpryker\Yves\CustomerPage\Form;
 
+use FondOfSpryker\Yves\CheckoutPage\Form\CheckoutAddressForm;
 use Generated\Shared\Transfer\AddressTransfer;
 use Spryker\Yves\Kernel\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -63,8 +64,7 @@ class CheckoutAddressCollectionForm extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this
-            ->addShippingAddressSubForm($builder, $options)
+        $this->addShippingAddressSubForm($builder, $options)
             ->addSameAsShipmentCheckbox($builder)
             ->addBillingAddressSubForm($builder, $options);
     }
@@ -81,7 +81,7 @@ class CheckoutAddressCollectionForm extends AbstractType
             'data_class' => AddressTransfer::class,
             'required' => false,
             'validation_groups' => function (FormInterface $form) {
-                if ($form->getParent()->get(self::FIELD_BILLING_SAME_AS_SHIPPING)->getData()) {
+                if ($form->getParent() !== null && $form->getParent()->get(self::FIELD_BILLING_SAME_AS_SHIPPING)->getData()) {
                     return false;
                 }
 

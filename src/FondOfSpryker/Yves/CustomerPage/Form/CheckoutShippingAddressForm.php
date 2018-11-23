@@ -3,7 +3,6 @@
 namespace FondOfSpryker\Yves\CustomerPage\Form;
 
 use FondOfSpryker\Yves\CheckoutPage\Form\CheckoutAddressForm;
-use Generated\Shared\Transfer\QuoteTransfer;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class CheckoutShippingAddressForm extends CheckoutAddressForm
@@ -20,23 +19,17 @@ class CheckoutShippingAddressForm extends CheckoutAddressForm
     {
         parent::buildForm($builder, $options);
 
-        $builder->remove(self::FIELD_EMAIL);
-        $this->removeCompany($builder, $options);
+        $builder->remove(static::FIELD_EMAIL);
     }
 
     /**
-     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param \Symfony\Component\Form\FormBuilderInterface $builder
      *
-     * @return \Generated\Shared\Transfer\AddressTransfer
+     * @return $this
      */
-    protected function getAddress(QuoteTransfer $quoteTransfer)
+    protected function removeEmailField(FormBuilderInterface $builder)
     {
-        return $quoteTransfer->getShippingAddress();
-    }
-
-    protected function removeCompany(FormBuilderInterface $builder, array $options)
-    {
-        $builder->remove(self::FIELD_COMPANY);
+        $builder->remove(static::FIELD_EMAIL);
 
         return $this;
     }
