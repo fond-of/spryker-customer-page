@@ -41,6 +41,7 @@ class CheckoutBillingAddressForm extends CheckoutAddressForm
             'constraints' => [
                 $this->createNotBlankConstraint($options),
                 $this->createMinLengthConstraint($options),
+                $this->createRegexEmailConstraint($options),
             ],
         ]);
 
