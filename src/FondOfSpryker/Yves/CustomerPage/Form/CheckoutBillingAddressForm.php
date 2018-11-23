@@ -9,13 +9,16 @@ use Generated\Shared\Transfer\QuoteTransfer;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class CheckoutBillingAddressForm extends CheckoutAddressForm
 {
     const FIELD_EMAIL_ADDRESS = 'email';
     const FIELD_ADDITIONAL_ADDRESS = 'additional_address';
+    const VALIDATE_REGEX_EMAIL = "/^[A-ZÄÖÜa-zäöü0-9._%+\&\-ß!]+@[a-zäöüA-ZÄÖÜ0-9.\-ß]+\.[a-zäöüA-ZÄÖÜ]{2,}$/ix";
 
     /**
      * @param \Symfony\Component\Form\FormBuilderInterface $builder
@@ -28,6 +31,7 @@ class CheckoutBillingAddressForm extends CheckoutAddressForm
         parent::buildForm($builder, $options);
 
         $this->addEmailField($builder, $options);
+        $this->addAltPhoneField($builder, $options);
         $this->removeCompany($builder, $options);
     }
 
@@ -45,6 +49,7 @@ class CheckoutBillingAddressForm extends CheckoutAddressForm
             'constraints' => [
                 $this->createNotBlankConstraint($options),
                 $this->createMinLengthConstraint($options),
+                $this->createRegexEmailConstraint($options),
             ],
         ]);
 
@@ -76,7 +81,7 @@ class CheckoutBillingAddressForm extends CheckoutAddressForm
      *
      * @return $this
      */
-    protected function addPhoneField(FormBuilderInterface $builder, array $options)
+    protected function addAltPhoneField(FormBuilderInterface $builder, array $options)
     {
         $builder->add(self::FIELD_PHONE, TextType::class, [
             'label' => 'customer.address.phone',
@@ -127,6 +132,15 @@ class CheckoutBillingAddressForm extends CheckoutAddressForm
                 }
             },
             'payload' => $this,
+            'groups' => $options[self::OPTION_VALIDATION_GROUP],
+        ]);
+    }
+
+    protected function createRegexEmailConstraint(array $options): Constraint
+    {
+        return new Regex([
+            'pattern' => static::VALIDATE_REGEX_EMAIL,
+            'message' => 'validation.regex.email.message',
             'groups' => $options[self::OPTION_VALIDATION_GROUP],
         ]);
     }
